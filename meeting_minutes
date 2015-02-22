@@ -1,0 +1,10 @@
+1.Clustering:
+  -Hierarchiarl Clustering
+    -# of clusters
+  -Walktrap Community
+  => Vertex Colour
+2.PageRank
+  => Vertex Size
+    -fixed size below certain threshold
+3.Remove Only-Likes: T/F
+4.Labels: T/F
