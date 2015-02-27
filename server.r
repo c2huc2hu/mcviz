@@ -1,6 +1,7 @@
 library(shiny)
 source('comment_network.R')
 library(igraph)
+library(Rfacebook)
 
 load_facebook_data <- function(group_id, post_id, access_token){  
   # Load the data about the post from Facebook's graph API. 
@@ -14,24 +15,29 @@ load_facebook_data <- function(group_id, post_id, access_token){
   comments <- post$comments
   likes <- post$likes
   
-  # Handle the likes on the comment
-  if (length(likes) == 0) { next; }
-  for(i in 1:length(likes))
-  {
-    interactions <- rbind(interactions, cbind(likes$from_name[i], post$post$from_name))
-  }
+   # Handle the likes on the comment
+   if (length(likes) > 0) {
+     for(i in 1:length(likes$from_name))
+     {
+       interactions <- rbind(interactions, cbind(likes$from_name[i], post$post$from_name))
+     }
+   }
   
   # handle the subcomments
-  for (i in 1:length(comments$from_name))  # i indexes comments
+  if (length(comments$from_name) > 0)
   {
-    likes <- getCommentLikes(paste(post_id, comments$id[i], sep='_'), access_token)
-    
-    if (length(likes) == 0)
-      { next; } # equivalent of "continue" in most languages. 
-    for(j in 1:length(likes)) # j indexes likes
+    for (i in 1:length(comments$from_name))  # i indexes comments
     {
-      #print(paste(comments$from_name[i], likes[[j]]$name, sep=" liked by ")) 
-      interactions <- rbind(interactions, cbind(likes[[j]]$name, comments$from_name[i]))
+      if (comments$likes_count[i] > 0)
+      {
+        likes <- getCommentLikes(paste(post_id, comments$id[i], sep='_'), access_token)
+      
+        for(j in 1:length(likes)) # j indexes likes
+        {
+          #print(paste(comments$from_name[i], likes[[j]]$name, sep=" liked by ")) 
+          interactions <- rbind(interactions, cbind(likes[[j]]$name, comments$from_name[i]))
+        }
+      }
     }
   }
   
@@ -55,8 +61,10 @@ shinyServer(function(input, output) {
         net_matrix <- data[data[,1] %in% data[,2],]
       else
         net_matrix <- data
-      
+  
+      print(data)
       net <- graph.edgelist(net_matrix)
+      
       label <- vertex_label(net, input$show_labels)
       pagerank <- size_weight(net, input$pagerank)
       size <- input$vertex_size * pagerank

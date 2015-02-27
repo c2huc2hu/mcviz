@@ -33,7 +33,7 @@ shinyUI(
       sliderInput("vertex_size", "Size of Vertex", 0, 10, 5, ticks=FALSE, animate=TRUE),
       checkboxInput("pagerank", "Change Size Based on PageRank of User"),
       
-      br(), br(),
+      br()
       checkboxInput("remove_only_likes", "Remove people who never commented"),
       checkboxInput("show_labels", "Show Labels")
     ),
