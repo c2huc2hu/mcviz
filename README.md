@@ -17,8 +17,4 @@ TODO:
 	see if we can get statuses too
 	make hierarchal clustering stop breaking when the graph is disconnected
 	remove the Python file because it's useless now 
-=======
-Requires R, python 2 and rPython. 
-
-rPython is difficult to install on windows, so we're going to try writing the python part in R instead. 
 
